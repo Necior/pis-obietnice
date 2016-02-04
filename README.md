@@ -8,4 +8,4 @@ Zainstaluj zależności, np. używając `pip3 install -r requirements.txt`. Rozw
 
 ## Uruchomienie
 
-`./main.py` - to wszystko, czego potrzeba!
+`./pis-obietnice.py` - to wszystko, czego potrzeba!
