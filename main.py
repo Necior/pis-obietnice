@@ -8,24 +8,41 @@ def question_to_affirmative(s):
     return s[4:-1] + '.'
 
 
-url = 'http://www.czypisnaprawiljuzpolske.pl/data/data.html'
+def get_promises():
+    url = 'http://www.czypisnaprawiljuzpolske.pl/data/data.html'
 
-connection = requests.get(url)
-connection.encoding = 'utf-8'
+    connection = requests.get(url)
+    connection.encoding = 'utf-8'
 
-if not connection.ok:
-    print('Coś poszło nie tak podczas łączenia się z API')
-    sys.exit(1)
+    if not connection.ok:
+        raise ValueError('Coś poszło nie tak podczas łączenia się z API.')
 
-promises = connection.json()
+    return connection.json()
 
-not_fulfilled = [p for p in promises if p['title'] == 'Nie!']
-fulfilled = [p for p in promises if p not in not_fulfilled]
 
-if not fulfilled:
-    print('PiS jeszcze nie spełnił żadnej obietnicy wyborczej.')
-    sys.exit()
+def get_not_fulfilled(promises=None):
+    if promises is None:
+        promises = get_promises()
+    return [p for p in promises if p['title'] == 'Nie!']
 
-print('\tSpełnione obietnice wyborcze:')
-for p in fulfilled:
-    print(question_to_affirmative(p['description']))
+
+def get_fulfilled(promises=None):
+    if promises is None:
+        promises = get_promises()
+    return [p for p in promises if p['title'] != 'Nie!']
+
+
+def main():
+    fulfilled = get_fulfilled()
+
+    if not fulfilled:
+        print('PiS jeszcze nie spełnił żadnej obietnicy wyborczej.')
+        sys.exit()
+
+    print('\tSpełnione obietnice wyborcze:')
+    for p in fulfilled:
+        print(question_to_affirmative(p['description']))
+
+
+if __name__ == '__main__':
+    main()
